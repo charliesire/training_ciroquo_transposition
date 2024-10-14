@@ -2,10 +2,11 @@ import numpy as np
 import pandas as pd
 from utils_calib import * 
 from gp_simus import *
+import sys
+sys.modules['scipy.pi'] = np.pi 
+sys.modules['scipy.cos'] = np.cos
+sys.modules['scipy.sin'] = np.sin 
 from pymcmcstat.MCMC import MCMC
-from pymcmcstat.ParallelMCMC import ParallelMCMC, load_parallel_simulation_results
-from pymcmcstat.chain import ChainStatistics as CS
-from pymcmcstat.chain import ChainProcessing as CP
 
 
 
