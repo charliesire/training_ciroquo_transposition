@@ -4,7 +4,7 @@ from utils_calib import *
 from gp_simus import *
 from scipy.stats import norm
 from joblib import Parallel, delayed
-from pymcmcstat.MCMC import MCMC
+import sys
 
 
 # The function MCMC_embed generates MCMC_samples for $(\lambda^1,\lambda^2)$, from 
@@ -30,7 +30,10 @@ from pymcmcstat.MCMC import MCMC
 
 
 def MCMC_embed(index_calib, idx_loo, tune_size, size, u, mm_list, results_measures, sigma, index_lambda_p, bMINlambda, bMAXlambda, rngseed):
-    
+    sys.modules['scipy.pi'] = np.pi 
+    sys.modules['scipy.cos'] = np.cos
+    sys.modules['scipy.sin'] = np.sin 
+    from pymcmcstat.MCMC import MCMC
     def priorfun(theta, mu, sigma): #logprior function #theta = (lambda^1, lambda^2)
         lambda1 = theta[:len(index_lambda_p)]
         lambda2 = theta[len(index_lambda_p):]
