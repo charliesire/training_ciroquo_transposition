@@ -14,7 +14,7 @@ import matplotlib.pyplot as plt
 
 variable_names = [r"$\ell_{F} - \ell_{0}$", r"$r_{F}$", r"$\epsilon_{max}$"] #names of the three outputs
 
-def plot_mean_std(index_calib, results_measures, true_values, sigma, pre_path, variable_names, no_error = False, unif_error = False, hierarchical_map = False, full_bayes = False, embed = False, savefig = False):
+def plot_mean_std(index_calib, results_measures, true_values, sigma, pre_path, no_error = False, unif_error = False, hierarchical_map = False, full_bayes = False, embed = False, savefig = False):
 
     list_values = [true_values, results_measures]
     list_sigma = [[0]*len(sigma), sigma]
@@ -44,16 +44,16 @@ def plot_mean_std(index_calib, results_measures, true_values, sigma, pre_path, v
         ax.scatter(x, list_values[0][f"Y{i}"]-list_values[0][f"Y{i}"], marker='x', color='blue', label=list_labels[0], s=120,linewidths=4) #plot true values
         if no_error: 
             sum_increments += 1
-            ax.errorbar(x + sum_increments*incr, (plot_no_error.iloc[:len(results_measures), i-1]-list_values[0][f"Y{i}"])/list_values[0][f"Y{i}"], yerr=plot_no_error.iloc[len(results_measures):, i-1]/list_values[0][f"Y{i}"], fmt='o', color='green', label='No error',elinewidth=elinewidth, markersize = markersize)  #plot no_error
+            ax.errorbar(x + sum_increments*incr, (plot_no_error.iloc[:10, i-1]-list_values[0][f"Y{i}"])/list_values[0][f"Y{i}"], yerr=plot_no_error.iloc[10:, i-1]/list_values[0][f"Y{i}"], fmt='o', color='green', label='No error',elinewidth=elinewidth, markersize = markersize)  #plot no_error
         if unif_error: 
             sum_increments += 1
-            ax.errorbar(x + sum_increments*incr, (plot_unif_error.iloc[:len(results_measures), i-1]-list_values[0][f"Y{i}"])/list_values[0][f"Y{i}"], yerr=plot_unif_error.iloc[len(results_measures):, i-1]/list_values[0][f"Y{i}"], fmt='o', color='red', label='Uniform error',elinewidth=elinewidth,markersize = markersize) #plot uniform error
+            ax.errorbar(x + sum_increments*incr, (plot_unif_error.iloc[:10, i-1]-list_values[0][f"Y{i}"])/list_values[0][f"Y{i}"], yerr=plot_unif_error.iloc[10:, i-1]/list_values[0][f"Y{i}"], fmt='o', color='red', label='Uniform error',elinewidth=elinewidth,markersize = markersize) #plot uniform error
         if hierarchical_map:
             sum_increments += 1
-            ax.errorbar(x + sum_increments*incr, (plot_hierarchical_plugin.iloc[:len(results_measures), i-1]-list_values[0][f"Y{i}"])/list_values[0][f"Y{i}"], yerr=plot_hierarchical_plugin.iloc[len(results_measures):, i-1]/list_values[0][f"Y{i}"], fmt='o', color='purple', label="Hierarchical \n     MAP",elinewidth=elinewidth,markersize = markersize) #plot hierarchical map
+            ax.errorbar(x + sum_increments*incr, (plot_hierarchical_plugin.iloc[:10, i-1]-list_values[0][f"Y{i}"])/list_values[0][f"Y{i}"], yerr=plot_hierarchical_plugin.iloc[10:, i-1]/list_values[0][f"Y{i}"], fmt='o', color='purple', label="Hierarchical \n     MAP",elinewidth=elinewidth,markersize = markersize) #plot hierarchical map
         if full_bayes:
             sum_increments += 1
-            ax.errorbar(x + sum_increments*incr, (plot_full_bayes.iloc[:len(results_measures), i-1]-list_values[0][f"Y{i}"])/list_values[0][f"Y{i}"], yerr=plot_full_bayes.iloc[len(results_measures):, i-1]/list_values[0][f"Y{i}"], fmt='o', color='magenta', label="Hierarchical \n full Bayes",elinewidth=elinewidth,markersize = markersize) #plot full bayes
+            ax.errorbar(x + sum_increments*incr, (plot_full_bayes.iloc[:10, i-1]-list_values[0][f"Y{i}"])/list_values[0][f"Y{i}"], yerr=plot_full_bayes.iloc[10:, i-1]/list_values[0][f"Y{i}"], fmt='o', color='magenta', label="Hierarchical \n full Bayes",elinewidth=elinewidth,markersize = markersize) #plot full bayes
         if embed: 
             sum_increments += 1
             ax.errorbar(x + 5*incr, (Ysimu_embed.iloc[:, i-1]-list_values[0][f"Y{i}"])/list_values[0][f"Y{i}"], yerr=Ystd_embed.iloc[:, i-1]/list_values[0][f"Y{i}"], fmt='o', color='orange', label="Embedded \ndiscrepancy",elinewidth=elinewidth,markersize = markersize) #plot embedded discrepancy
@@ -118,7 +118,7 @@ def compare_errors(index_calib,pre_path,no_error = False, unif_error = False, hi
     return pd.DataFrame(res), pd.DataFrame(res_intervals), columns
 
 
-def plot_errors(index_calib, pre_path, variable_names, no_error = False, unif_error = False, hierarchical_map = False, full_bayes = False, embed = False, savefig = False, nb_outputs = 3):
+def plot_errors(index_calib, pre_path, no_error = False, unif_error = False, hierarchical_map = False, full_bayes = False, embed = False, savefig = False, nb_outputs = 3):
     errors = compare_errors(index_calib=index_calib, pre_path=pre_path,  no_error = no_error, unif_error = unif_error, hierarchical_map = hierarchical_map, full_bayes = full_bayes, embed = embed, nb_outputs = nb_outputs) #Get RMSRE and p^0.9_M,N
     names = errors[2]
     errors = errors[0] * 100, errors[1] * 100 #convert to %
