@@ -164,7 +164,7 @@ def plot_errors(index_calib, pre_path, variable_names, no_error = False, unif_er
 def plot_samples(list_samples, list_labels, params, lambda_0 = None):
   dim = (list_samples[0]).shape[1]
   if dim<4: pair = (1,dim)
-  elif int(np.sqrt(dim)) = np.sqrt(dim): pair = (int(np.sqrt(dim)),int(np.sqrt(dim)))
+  elif int(np.sqrt(dim)) == np.sqrt(dim): pair = (int(np.sqrt(dim)),int(np.sqrt(dim)))
   else: pair = (dim//3+1, 3)
     
   fig, axes = plt.subplots(pair[0], pair[1], figsize=(18, 10))
