@@ -4,6 +4,8 @@ import matplotlib.patches as mpatches
 import pandas as pd 
 import numpy as np
 import matplotlib.pyplot as plt
+import seaborn  as sns
+
 
 
 #The function plot_mean_std plots the mean and standard deviations for each method, and compares it to the true values and the calibration measures. 
