@@ -12,6 +12,8 @@ import matplotlib.pyplot as plt
 
 #The function plot_errors plots the RMSRE and $p^{0.9}_{N,M}$ for each method.
 
+#The function plot_samples plot different samples of lambda
+
 def plot_mean_std(index_calib, results_measures, true_values, sigma, pre_path, variable_names, no_error = False, unif_error = False, hierarchical_map = False, full_bayes = False, savefig = False):
 
     list_values = [true_values, results_measures]
@@ -159,3 +161,28 @@ def plot_errors(index_calib, pre_path, variable_names, no_error = False, unif_er
     
     plt.show()
 
+def plot_samples(list_samples, list_labels, params, lambda_0 = None):
+  
+  fig, axes = plt.subplots(2, 3, figsize=(18, 10))
+  axes = axes.flatten()
+  cmap = plt.get_cmap("viridis") 
+  nb = len(list_samples)
+  cols = [cmap(i / nb) for i in range(nb)]
+  #cols = [[cmap(i / 1000) for i in range(1000)][kk] for kk in np.linspace(0,999, dtype = int)]
+
+  for i in range((list_samples[0]).shape[1]):
+    for k in range(nb): sns.kdeplot(list_samples[k][:, i], ax=axes[i], label=list_labels[k], color=cols[k], fill=True, alpha=0.3)
+      
+    axes[i].set_xticks([0, 0.25, 0.5, 0.75, 1])
+    axes[i].set_title(f'Posterior distribution of {params[i]}', fontsize=25)
+    axes[i].tick_params(axis='both', labelsize=20)
+    axes[i].set_ylabel('') 
+    if lambda_0 is not None: axes[i].scatter(lambda_0[i], 0, color='black', marker='x', s=150, label=r'$\lambda_0$',clip_on=False)
+
+  handles, labels = axes[3].get_legend_handles_labels()  # Récupérer les objets courbes et les labels d'un subplot
+
+  fig.legend(handles, labels, loc='center left', bbox_to_anchor=(1, 0.5), fontsize=30)
+
+  plt.tight_layout()
+
+  plt.show()
