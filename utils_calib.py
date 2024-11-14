@@ -38,14 +38,14 @@ def p_lambda_df(df_Lambda, alpha, index_lambda_p, index_lambda_q, scale, bMINlam
         coeff2 = coeff2*truncnorm.pdf((lambd_norm.iloc[:,index_lambda_q[ii]].values - alpha[ii])/scale[ii], a[ii],b[ii])/scale[ii] #truncated gaussian for the coordinates "index_lambda_q"
     return coeff1*coeff2
 
-def get_likelihoods_dflambda(df_Lambda, sigma,results_measures, myCODE, mm_list = None, index = [1,2,3], std_code = False, idx_loo = None):
+def get_likelihoods_dflambda(df_Lambda, sigma,results_measures, myCODE, mm_list = None, index = 1, std_code = False, idx_loo = None):
     Ysimu = myCODE(df_Lambda, index = index,  std_bool = std_code, vectorize = True, idx_loo = idx_loo,  mm_list = mm_list) #Get simulations
     if std_code: #if gaussian process regression
         Ysimu, Ystd = Ysimu #Get std deviations and simulations
-        res = [[np.prod(norm.pdf(results_measures.loc[list(set(range(len(results_measures))) - set([idx_loo])),f"Y{index[ii]}"].values-Ysimu[iii].iloc[:,ii].values, loc=0, scale=np.sqrt(sigma[index[ii]-1] + Ystd[iii].iloc[:,ii].values))) for ii in range(len(index))] for iii in range(len(Ysimu))] #compute gaussian likelihoods, considering std of observation noise and std of gaussian process
+        res = [[np.prod(norm.pdf(results_measures[list(set(range(len(results_measures))) - set([idx_loo]))].values-Ysimu[iii].iloc[:,0].values, loc=0, scale=np.sqrt(sigma + Ystd[iii].iloc[:,0].values)))] for iii in range(len(Ysimu))] #compute gaussian likelihoods, considering std of observation noise and std of gaussian process
         
     else: #if deterministic simulator
-        res = [[np.prod(norm.pdf(results_measures.loc[list(set(range(len(results_measures))) - set([idx_loo])),f"Y{index[ii]}"]-Ysimu[iii].iloc[:,ii], loc=0, scale=sigma[index[ii]-1])) for ii in range(len(index))] for iii in range(len(Ysimu))] #compute gaussian likelihoods, considering only observation noise
+        res = [[np.prod(norm.pdf(results_measures[list(set(range(len(results_measures))) - set([idx_loo]))]-Ysimu[iii].iloc[:,0], loc=0, scale=sigma))] for iii in range(len(Ysimu))] #compute gaussian likelihoods, considering only observation noise
         Ystd = None
     return Ysimu, Ystd, np.array(res)
 

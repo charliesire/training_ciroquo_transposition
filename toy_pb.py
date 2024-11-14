@@ -15,12 +15,13 @@ def func(x, lambd, idx_y, vectorize):
 
 
 def myCODE(lambd, index = [1,2], std_bool = False, vectorize = True, idx_loo = None, new_x = False, mm_list = None):
+    x_vec = np.linspace(0,1,7)[1:-1]
     len_final = len(list(set(range(5)) - set([idx_loo]))) #Number of observations
     if not vectorize:
         res = np.empty((len_final,0))
         res_std = np.empty((len_final,0))
         for y in index: #for each output
-            Ysimu = [func(xx, lambd, y,vectorize) for xx in np.linspace(0,1,7)[1:-1]] #get the prediction for all x_j
+            Ysimu = [func(x_vec[xx], lambd, y,vectorize)  for xx in range(len(x_vec)) if xx != idx_loo] #get the prediction for all x_j
             res = np.concatenate([res, np.array(Ysimu)],axis=1) #concatenate the obtained columns (1 per output)
         res = pd.DataFrame(res)
         res_std = pd.DataFrame(res_std)
@@ -29,7 +30,7 @@ def myCODE(lambd, index = [1,2], std_bool = False, vectorize = True, idx_loo = N
             res = [np.empty((len_final,0)) for _ in range(len(lambd))]
             res_std = [np.empty((len_final,0)) for _ in range(len(lambd))]
             for y in index: #for each output
-                Ysimu = [func(xx, lambd, y,vectorize) for xx in np.linspace(0,1,7)[1:-1]] #get the prediction for all x_j
+                Ysimu = [func(x_vec[xx], lambd, y,vectorize) for xx in range(len(x_vec)) if xx != idx_loo] #get the prediction for all x_j
                 res = [np.concatenate([res[ii], np.array(Ysimu)[:,ii].reshape(-1,1)], axis=1) for ii in range(len(lambd))] #concatenate the obtained columns for each lambda (1 per output) 
             res = [pd.DataFrame(rr) for rr in res] #for each lambda get dataframe
             res_std = [pd.DataFrame(rr) for rr in res_std] #for each lambda get dataframe
@@ -37,7 +38,7 @@ def myCODE(lambd, index = [1,2], std_bool = False, vectorize = True, idx_loo = N
             res = np.empty((len(lambd),0))
             res_std = np.empty((len(lambd),0))
             for y in index: #for each output
-                Ysimu = func(np.linspace(0,1,7)[1:-1][idx_loo], lambd, y,vectorize)
+                Ysimu = func(x_vec[idx_loo], lambd, y,vectorize)
                 res = pd.DataFrame(np.concatenate([res, Ysimu.reshape(-1,1)], axis=1)) #concatenate the obtained columns
 
     return res

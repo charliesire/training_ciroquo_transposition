@@ -46,5 +46,5 @@ def func_alphamap(index_calib, M, iter_lim, threshold, alpha_min, alpha_max, del
         sample_size_df.append(M_used-2000)
         
     save_results(pd.DataFrame(alpha_df), "alpha_df.csv", pre_path = pre_path, calib = index_calib)
-    save_results(pd.DataFrame(sample_size_df), "sample_sizes.csv", pre_path = pre_path, calib = index_calib)
+    #save_results(pd.DataFrame(sample_size_df), "sample_sizes.csv", pre_path = pre_path, calib = index_calib)
     

@@ -76,16 +76,16 @@ def MCMC_lambda(index_calib, model_error, scale, alpha_map, idx_loo, tune_size, 
         lambd = transform_Lambda(Lambda = theta, index_lambda_p= index_lambda_p, index_lambda_q =index_lambda_q, bMINlambda = bMINlambda, bMAXlambda = bMAXlambda) 
         if std_code:
             Ysimu, Ystd = myCODE(lambd, index = [index_calib],  std_bool = std_code, vectorize = False, idx_loo = idx_loo, mm_list = mm_list) #get the output for all observations points x_j except at idx_loo
-            ss = np.prod(norm.pdf(ydata[:,0]-Ysimu.values.flatten(), loc=0, scale=np.sqrt(sigma[index_calib-1]**2 + Ystd.values.flatten()**2))) #compute the likelihood
+            ss = np.prod(norm.pdf(ydata[:,0]-Ysimu.values.flatten(), loc=0, scale=np.sqrt(sigma**2 + Ystd.values.flatten()**2))) #compute the likelihood
         else: 
             Ysimu = myCODE(lambd, index = [index_calib],  std_bool = std_code, vectorize = False, idx_loo = idx_loo, mm_list = mm_list) #get the output for all observations points x_j except at idx_loo
-            ss = np.prod(norm.pdf(ydata[:,0]-Ysimu.values.flatten(), loc=0, scale=np.sqrt(sigma[index_calib-1]**2))) #compute the likelihood
+            ss = np.prod(norm.pdf(ydata[:,0]-Ysimu.values.flatten(), loc=0, scale=np.sqrt(sigma**2))) #compute the likelihood
         return -2*np.log(ss)
 
     mcstat = MCMC(rngseed=rngseed)
 
     x = np.array(list(set(range(len(results_measures))) - set([idx_loo]))) 
-    y = results_measures.loc[list(set(range(len(results_measures))) - set([idx_loo])),f"Y{index_calib}"].values #all measures points except loo
+    y = results_measures[list(set(range(len(results_measures))) - set([idx_loo]))]#all measures points except loo
     mcstat.data.add_data_set(x, y)
     mcstat.simulation_options.define_simulation_options(
         nsimu=int(tune_size+size),
@@ -174,7 +174,7 @@ def bayes_lambda_results(index_calib, pre_path, true_values, std_code):
         Ystd_list = np.array_split(Ystd, len(Ystd) // len(true_values))# change the format to a list of dataframes: one df for each lambda
     else: Ystd_list = None
     plot1 = plot_transpo(Ysimu_list = Ysimu_list, Ystd_list = Ystd_list) #compute prediction mean and standard deviation
-    save_results(plot1, "plot_alpha_map_lamdba_bayesian.csv",pre_path = pre_path, calib = index_calib) #save results
+    save_results(plot1, "plot_alpha_map.csv",pre_path = pre_path, calib = index_calib) #save results
     errors, intervals = compute_error(Ysimu_list = Ysimu_list, true_values = true_values, Ystd_list = Ystd_list) #compute RMSRE and p^0.9
     save_results(pd.DataFrame(errors), "errors_map.csv", pre_path = pre_path, calib = index_calib) #save results
-    save_results(pd.DataFrame(intervals), "intervals_map.csv", pre_path = pre_path, calib = index_calib) #save results
+    save_results(pd.DataFrame(intervals), "conf_level_map.csv", pre_path = pre_path, calib = index_calib) #save results

@@ -83,10 +83,10 @@ def full_bayes_results(index_calib, index_lambda_p, index_lambda_q, scale, bMINl
         Ystd_list = np.array_split(Ystd, len(Ystd) // len(true_values))
     else: Ystd_list = None
     plot1 = plot_transpo_fullbayes(dic_Lambda = dic_Lambda, dic_alpha = dic_alpha, Ysimu_list = Ysimu_list, Ystd_list = Ystd_list, alpha_df = alpha_df, index_lambda_p = index_lambda_p, index_lambda_q = index_lambda_q, scale = scale, bMINlambda = bMINlambda, bMAXlambda = bMAXlambda, loo = loo) #compute prediction mean and std
-    save_results(plot1[0], "full_bayes.csv", pre_path = pre_path, calib = index_calib) 
+    save_results(plot1[0], "plot_full_bayes.csv", pre_path = pre_path, calib = index_calib) 
     ratio_is = plot1[1]
     errors_bayes, intervals_bayes = compute_error_fullbayes(ratio_is = ratio_is, Ysimu_list = Ysimu_list, Ystd_list = Ystd_list, true_values = true_values, loo = loo) #compute RMSRE and levels of prediction intervals
     save_results(pd.DataFrame(errors_bayes), "errors_bayes.csv", pre_path = pre_path, calib = index_calib)
-    save_results(pd.DataFrame(intervals_bayes), "intervals_bayes.csv", pre_path = pre_path, calib = index_calib)
+    save_results(pd.DataFrame(intervals_bayes), "conf_level_bayes.csv", pre_path = pre_path, calib = index_calib)
     
     
