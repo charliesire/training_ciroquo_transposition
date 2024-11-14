@@ -5,7 +5,8 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn  as sns
-
+from matplotlib.ticker import ScalarFormatter
+import itertools
 
 
 #The function plot_mean_std plots the mean and standard deviations for each method, and compares it to the true values and the calibration measures. 
@@ -15,6 +16,8 @@ import seaborn  as sns
 #The function plot_errors plots the RMSRE and $p^{0.9}_{N,M}$ for each method.
 
 #The function plot_samples plot different samples of lambda
+
+#The function plot_confidence_alpha plot the confidence level associated with p(alpha | yobs) < beta*p(alphastar | yobs)
 
 def plot_mean_std(index_calib, results_measures, true_values, sigma, pre_path, variable_names, no_error = False, unif_error = False, hierarchical_map = False, full_bayes = False, savefig = False):
 
@@ -190,4 +193,47 @@ def plot_samples(list_samples, list_labels, params, lambda_0 = None):
 
   plt.tight_layout()
 
+  plt.show()
+
+
+def plot_confidence_alpha(index_calib, scale, M, beta, size_grid, alpha_min, alpha_max, delta_alpha, rngseed, results_measures, sigma, myCODE, mm_list, index_lambda_p, index_lambda_q, bMINlambda, bMAXlambda, pre_path, idx_loo, std_code):
+  alpha_map_list = pd.read_csv(pre_path + f"hierarchical_model/calib_{index_calib}/alpha_df.csv", index_col = 0).values #get the estimated alpha_maps
+  if idx_loo is None: 
+    alpha_star = alpha_map_list[0]
+  else:
+    alpha_star = alpha_map_list[idx_loo]
+  np.random.seed(rngseed)
+  df_Lambda = sample_Lambda(alpha = alpha_star, M = M, index_lambda_p = index_lambda_p, index_lambda_q = index_lambda_q, scale = scale, bMINlambda = bMINlambda, bMAXlambda = bMAXlambda) #sample lambda from p(lambda given alpha_map)
+
+  Ysimu_list, Ystd_list, stored_likelihoods = get_likelihoods_dflambda(df_Lambda = df_Lambda.values, sigma = sigma, myCODE = myCODE, mm_list = mm_list, results_measures = results_measures, index=[index_calib], std_code = std_code, idx_loo = idx_loo) #compute likelihood of each lambda
+
+
+  bounds = [(max(alpha_star[ii] - delta_alpha,alpha_min), min(alpha_max, alpha_star[ii]+delta_alpha)) for ii in range(len(alpha_star))] #bounds of the grid
+
+  alpha_grid = np.array(list(itertools.product(np.linspace(bounds[0][0],bounds[0][1],size_grid), np.linspace(bounds[1][0],bounds[1][1],size_grid))))
+  p_alphastar = p_lambda_df(df_Lambda = df_Lambda, alpha = alpha_star, index_lambda_p = index_lambda_p, index_lambda_q = index_lambda_q, scale = scale, bMINlambda = bMINlambda, bMAXlambda = bMAXlambda) #prior coefficient p(lambda_k | alpha_map)
+  ratios_dic = {} #compute the importance sampling ratios for every alpha in the grid
+  for ii in range(len(alpha_grid)):
+    alpha = alpha_grid[ii]
+    ratios_dic[str(alpha)] = np.array(p_lambda_df(df_Lambda = df_Lambda, alpha = np.array(alpha), index_lambda_p = index_lambda_p, index_lambda_q = index_lambda_q, scale = scale,  bMINlambda = bMINlambda, bMAXlambda = bMAXlambda)/p_alphastar).reshape(len(p_alphastar),1)
+      
+  is_terms = np.concatenate([stored_likelihoods*ratios_dic[str(alpha)] for alpha in alpha_grid], axis=1) #likelihood times is ratios (p(yobs | lambda_k) p(lambda_k | alpha)/p(lambda_k | alpha_star)
+  is_terms_diff = is_terms - beta*stored_likelihoods #(p(yobs | lambda_k) (p(lambda_k | alpha)/p(lambda_k | alpha_star) - \beta)
+  mu_alpha = np.mean(is_terms_diff, axis = 0)
+  std_alpha = np.std(is_terms_diff, axis=0)
+
+
+  confidence = norm.cdf(np.sqrt(M)*(-mu_alpha)/std_alpha)
+
+
+  figure(figsize=(15, 15), dpi=80) #plot the confidence level ac
+  contour = plt.contourf(np.linspace(bounds[0][0],bounds[0][1],10),np.linspace(bounds[1][0],bounds[1][1],10), np.transpose(confidence.reshape(10,10)), cmap='viridis',extend="max")
+  plt.scatter(alpha_star[0], alpha_star[1], marker='x', color='red', s=200, linewidths=5, label=r'$\alpha^\star_\ell$')
+  colorbar = plt.colorbar(contour, label='')
+  colorbar.ax.tick_params(labelsize=40)
+  colorbar.ax.yaxis.set_major_formatter(ScalarFormatter(useOffset=False))
+  plt.title(r"Asymptotic confidence level $\gamma(\alpha)$", fontsize=35)
+  plt.yticks(fontsize=25)
+  plt.xticks(fontsize=25)
+  plt.legend(loc='upper right', fontsize=35)
   plt.show()
