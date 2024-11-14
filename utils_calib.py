@@ -42,7 +42,7 @@ def get_likelihoods_dflambda(df_Lambda, sigma,results_measures, myCODE, mm_list 
     Ysimu = myCODE(df_Lambda, index = index,  std_bool = std_code, vectorize = True, idx_loo = idx_loo,  mm_list = mm_list) #Get simulations
     if std_code: #if gaussian process regression
         Ysimu, Ystd = Ysimu #Get std deviations and simulations
-        res = [[np.prod(norm.pdf(results_measures[list(set(range(len(results_measures))) - set([idx_loo]))].values-Ysimu[iii].iloc[:,0].values, loc=0, scale=np.sqrt(sigma + Ystd[iii].iloc[:,0].values)))] for iii in range(len(Ysimu))] #compute gaussian likelihoods, considering std of observation noise and std of gaussian process
+        res = [[np.prod(norm.pdf(results_measures[list(set(range(len(results_measures))) - set([idx_loo]))]-Ysimu[iii].iloc[:,0], loc=0, scale=np.sqrt(sigma + Ystd[iii].iloc[:,0])))] for iii in range(len(Ysimu))] #compute gaussian likelihoods, considering std of observation noise and std of gaussian process
         
     else: #if deterministic simulator
         res = [[np.prod(norm.pdf(results_measures[list(set(range(len(results_measures))) - set([idx_loo]))]-Ysimu[iii].iloc[:,0], loc=0, scale=sigma))] for iii in range(len(Ysimu))] #compute gaussian likelihoods, considering only observation noise
