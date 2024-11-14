@@ -162,15 +162,19 @@ def plot_errors(index_calib, pre_path, variable_names, no_error = False, unif_er
     plt.show()
 
 def plot_samples(list_samples, list_labels, params, lambda_0 = None):
-  
-  fig, axes = plt.subplots(2, 3, figsize=(18, 10))
+  dim = (list_samples[0]).shape[1]
+  if dim<4: pair = (1,dim)
+  elif int(np.sqrt(dim)) = np.sqrt(dim): pair = (int(np.sqrt(dim)),int(np.sqrt(dim)))
+  else: pair = (dim//3+1, 3)
+    
+  fig, axes = plt.subplots(pair[0], pair[1], figsize=(18, 10))
   axes = axes.flatten()
   cmap = plt.get_cmap("viridis") 
   nb = len(list_samples)
   cols = [cmap(i / nb) for i in range(nb)]
   #cols = [[cmap(i / 1000) for i in range(1000)][kk] for kk in np.linspace(0,999, dtype = int)]
 
-  for i in range((list_samples[0]).shape[1]):
+  for i in range(dim):
     for k in range(nb): sns.kdeplot(list_samples[k][:, i], ax=axes[i], label=list_labels[k], color=cols[k], fill=True, alpha=0.3)
       
     axes[i].set_xticks([0, 0.25, 0.5, 0.75, 1])
