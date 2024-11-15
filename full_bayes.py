@@ -91,7 +91,7 @@ def full_bayes_results(index_calib, index_lambda_p, index_lambda_q, scale, bMINl
 
 def full_bayes_pred(x, index, sample_alpha, sample_lambda, alpha_star, myCODEnew, std_bool = False, mm_list = None, mean_std = True, psi = None):
     if std_bool & psi is not None: return "Error: Can not compute expectation of psi(Y) if std_bool is True"
-    if psi is None and mean_std == False: return("Nothing to compute as mean_std is False and psi is None)
+    if psi is None and mean_std == False: return "Nothing to compute as mean_std is False and psi is None"
     if std_bool: Ysimu, Ystd = myCODEnew(x = x, index = index, std_bool = std_bool, mm_list = mm_list)
     else: Ysimu = myCODEnew(x = x, index = index, std_bool = std_bool, mm_list = mm_list)
     denom_ratio_is = p_lambda_df(df_Lambda = dic_Lambda[ii], alpha = alpha_star, index_lambda_p=index_lambda_p, index_lambda_q = index_lambda_q, scale = scale, bMINlambda = bMINlambda, bMAXlambda = bMAXlambda)  #compute the denominator of the importance sampling ratios
