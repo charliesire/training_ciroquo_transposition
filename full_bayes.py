@@ -89,7 +89,7 @@ def full_bayes_results(index_calib, index_lambda_p, index_lambda_q, scale, bMINl
     save_results(pd.DataFrame(errors_bayes), "errors_bayes.csv", pre_path = pre_path, calib = index_calib)
     save_results(pd.DataFrame(intervals_bayes), "conf_level_bayes.csv", pre_path = pre_path, calib = index_calib)
 
-def predictor(x, index, sample_alpha, sample_lambda, myCODEnew, alpha_star = None,  scale, index_lambda_p, index_lambda_q, bMINlambda, bMAXlambda, std_bool = False, mm_list = None, mean_std = True, psi = None):
+def predictor(x, index, sample_alpha, sample_lambda, myCODEnew, alpha_star = None,  scale = None, index_lambda_p = None, index_lambda_q = None, bMINlambda = None, bMAXlambda = None, std_bool = False, mm_list = None, mean_std = True, psi = None):
     if std_bool & (psi is not None): return "Error: Can not compute expectation of psi(Y) if std_bool is True"
     if psi is None and mean_std == False: return "Nothing to compute as mean_std is False and psi is None"
     if std_bool: Ysimu, Ystd = myCODEnew(x = x, lambd = sample_lambda, index = index, std_bool = std_bool, mm_list = mm_list)
