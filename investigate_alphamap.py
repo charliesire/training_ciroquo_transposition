@@ -18,8 +18,6 @@ def func_alphamap(index_calib, M, iter_lim, threshold, alpha_min, alpha_max, del
     alpha_df = np.zeros((len(list_idx_loo), len(index_lambda_q))) #the alpha_map will be stored here
     sample_size_df = []
     for idx_loo in list_idx_loo: #for each observation x_j
-        print(f"IDX LOO  {idx_loo}")
-
         alpha_new = np.array([0.5]*len(index_lambda_q)) #initial alpha_star
         alpha_star = np.array([10**6]*len(index_lambda_q))
 
