@@ -12,7 +12,7 @@ def check_repeat(stored_alpha, new_alpha, threshold): #check if an alpha of the 
     else: return np.min(np.apply_along_axis(lambda xx: norm2(xx, new_alpha),1, stored_alpha)) < threshold
 
 
-def func_alphamap(index_calib, M, iter_lim, threshold, alpha_min, alpha_max, delta_alpha, scale, results_measures, sigma, myCODE, mm_list, index_lambda_p, index_lambda_q, bMINlambda, bMAXlambda, pre_path, loo = True, std_code = True):
+def func_alphamap(index_calib, L, iter_lim, threshold, alpha_min, alpha_max, delta_alpha, scale, results_measures, sigma, myCODE, mm_list, index_lambda_p, index_lambda_q, bMINlambda, bMAXlambda, pre_path, loo = True, std_code = True):
     if not loo: list_idx_loo = [None]
     else: list_idx_loo = range(len(results_measures))
     alpha_df = np.zeros((len(list_idx_loo), len(index_lambda_q))) #the alpha_map will be stored here
@@ -24,7 +24,7 @@ def func_alphamap(index_calib, M, iter_lim, threshold, alpha_min, alpha_max, del
         iter=1
     
         stored_alpha = np.empty((0,len(alpha_star))) #all the alpha_star computed will be stored here
-        M_used = M #number of i.i.d. realizations
+        M_used = L #number of i.i.d. realizations
 
         while iter <= iter_lim and norm2(alpha_new,alpha_star)> threshold: #while not fixed point
             alpha_star = alpha_new.copy()
