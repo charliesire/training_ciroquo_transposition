@@ -58,7 +58,7 @@ def MCMC_alpha(df_Lambda, stored_likelihoods, p_lambda_alphastar, scale, alpha_s
     mcstat.run_simulation()
     return mcstat.simulation_results.results
 
-def MCMC_alpha_multichains(index_calib, scale, num_chain, tune_size, size, M, alpha_min, alpha_max, delta_alpha, rngseed, results_measures, sigma, myCODE, mm_list, index_lambda_p, index_lambda_q, bMINlambda, bMAXlambda, pre_path, loo = True, std_code = True):
+def MCMC_alpha_multichains(index_calib, scale, num_chain, tune_size, size, L, alpha_min, alpha_max, delta_alpha, rngseed, results_measures, sigma, myCODE, mm_list, index_lambda_p, index_lambda_q, bMINlambda, bMAXlambda, pre_path, loo = True, std_code = True):
     if not loo: list_idx_loo = [None]
     else: list_idx_loo = range(len(results_measures))
     np.random.seed(rngseed)
@@ -68,7 +68,7 @@ def MCMC_alpha_multichains(index_calib, scale, num_chain, tune_size, size, M, al
         if idx_loo is None: alpha_star = alpha_df[0]
         else: alpha_star = alpha_df[idx_loo]
         np.random.seed(123456)
-        df_Lambda = sample_Lambda(alpha = alpha_star, M = M, index_lambda_p = index_lambda_p, index_lambda_q = index_lambda_q,scale = scale, bMINlambda = bMINlambda, bMAXlambda = bMAXlambda) #sample lambda
+        df_Lambda = sample_Lambda(alpha = alpha_star, M = L, index_lambda_p = index_lambda_p, index_lambda_q = index_lambda_q,scale = scale, bMINlambda = bMINlambda, bMAXlambda = bMAXlambda) #sample lambda
         Ysimu_list, Ystd_list, stored_likelihoods = get_likelihoods_dflambda(df_Lambda = df_Lambda.values, sigma = sigma, myCODE = myCODE, mm_list = mm_list, results_measures = results_measures, index=[index_calib], std_code = std_code, idx_loo = idx_loo) #get likelihoods
         p_lambda_alphastar = p_lambda_df(df_Lambda, alpha_star, index_lambda_p = index_lambda_p, index_lambda_q = index_lambda_q, scale = scale, bMINlambda = bMINlambda, bMAXlambda = bMAXlambda) #get the prior densities with alpha_star
         res = [MCMC_alpha(df_Lambda = df_Lambda, stored_likelihoods = stored_likelihoods, p_lambda_alphastar = p_lambda_alphastar, scale = scale, alpha_star = alpha_star, tune_size = tune_size, size = size,  alpha_min = alpha_min, alpha_max = alpha_max, delta_alpha = delta_alpha, rngseed = ss, index_lambda_p = index_lambda_p, index_lambda_q = index_lambda_q, bMINlambda = bMINlambda, bMAXlambda = bMAXlambda) for ss in seeds] #run every MCMC chain
