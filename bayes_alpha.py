@@ -65,7 +65,6 @@ def MCMC_alpha_multichains(index_calib, scale, num_chain, tune_size, size, M, al
     seeds = np.random.randint(1000, size = num_chain) #get seed for each chain
     alpha_df = pd.read_csv(pre_path + f"/calib_{index_calib}/alpha_df.csv", index_col = 0).values
     for idx_loo in list_idx_loo:
-        print(idx_loo)
         if idx_loo is None: alpha_star = alpha_df[0]
         else: alpha_star = alpha_df[idx_loo]
         np.random.seed(123456)
