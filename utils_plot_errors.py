@@ -197,14 +197,14 @@ def plot_samples(list_samples, list_labels, params, lambda_0 = None):
   plt.show()
 
 
-def plot_confidence_alpha(index_calib, scale, M, beta, size_grid, alpha_min, alpha_max, delta_alpha, rngseed, results_measures, sigma, myCODE, mm_list, index_lambda_p, index_lambda_q, bMINlambda, bMAXlambda, pre_path, idx_loo, std_code):
+def plot_confidence_alpha(index_calib, scale, L, beta, size_grid, alpha_min, alpha_max, delta_alpha, rngseed, results_measures, sigma, myCODE, mm_list, index_lambda_p, index_lambda_q, bMINlambda, bMAXlambda, pre_path, idx_loo, std_code):
   alpha_map_list = pd.read_csv(pre_path + f"hierarchical_model/calib_{index_calib}/alpha_df.csv", index_col = 0).values #get the estimated alpha_maps
   if idx_loo is None: 
     alpha_star = alpha_map_list[0]
   else:
     alpha_star = alpha_map_list[idx_loo]
   np.random.seed(rngseed)
-  df_Lambda = sample_Lambda(alpha = alpha_star, M = M, index_lambda_p = index_lambda_p, index_lambda_q = index_lambda_q, scale = scale, bMINlambda = bMINlambda, bMAXlambda = bMAXlambda) #sample lambda from p(lambda given alpha_map)
+  df_Lambda = sample_Lambda(alpha = alpha_star, M = L, index_lambda_p = index_lambda_p, index_lambda_q = index_lambda_q, scale = scale, bMINlambda = bMINlambda, bMAXlambda = bMAXlambda) #sample lambda from p(lambda given alpha_map)
 
   Ysimu_list, Ystd_list, stored_likelihoods = get_likelihoods_dflambda(df_Lambda = df_Lambda.values, sigma = sigma, myCODE = myCODE, mm_list = mm_list, results_measures = results_measures, index=[index_calib], std_code = std_code, idx_loo = idx_loo) #compute likelihood of each lambda
 
