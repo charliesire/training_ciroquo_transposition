@@ -238,7 +238,7 @@ def plot_confidence_alpha(index_calib, scale, M, beta, size_grid, alpha_min, alp
     contour = plt.contourf(np.linspace(bounds[0][0],bounds[0][1],size_grid),np.linspace(bounds[1][0],bounds[1][1],size_grid), np.transpose(confidence.reshape(size_grid,size_grid)), cmap='viridis',extend="max")
     plt.scatter(alpha_star[0], alpha_star[1], marker='x', color='red', s=200, linewidths=5, label=r'$\alpha^\star_\ell$')
     colorbar = plt.colorbar(contour, label='')
-    colorbar.ax.tick_params(labelsize=40)
+    colorbar.ax.tick_params(labelsize=15)
     colorbar.ax.yaxis.set_major_formatter(ScalarFormatter(useOffset=False))
     plt.title(r"Asymptotic confidence level $\gamma(\alpha)$", fontsize=35)
     plt.legend(loc='upper right', fontsize=35)
