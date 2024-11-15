@@ -226,7 +226,7 @@ def plot_confidence_alpha(index_calib, scale, L, beta, size_grid, alpha_min, alp
   std_alpha = np.std(is_terms_diff, axis=0)
 
 
-  confidence = norm.cdf(np.sqrt(M)*(-mu_alpha)/std_alpha)
+  confidence = norm.cdf(np.sqrt(L)*(-mu_alpha)/std_alpha)
   figure(figsize=(10, 5), dpi=80) #plot the confidence level ac
   if len(index_lambda_q)==1: 
     plt.plot(np.linspace(bounds[0][0],bounds[0][1],size_grid), confidence)
