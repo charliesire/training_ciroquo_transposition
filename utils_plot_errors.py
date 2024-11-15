@@ -188,7 +188,7 @@ def plot_samples(list_samples, list_labels, params, lambda_0 = None):
     axes[i].set_ylabel('') 
     if lambda_0 is not None: axes[i].scatter(lambda_0[i], 0, color='black', marker='x', s=150, label=r'$\lambda_0$',clip_on=False)
 
-  handles, labels = axes[3].get_legend_handles_labels()  # Récupérer les objets courbes et les labels d'un subplot
+  handles, labels = axes[0].get_legend_handles_labels()  # Récupérer les objets courbes et les labels d'un subplot
 
   fig.legend(handles, labels, loc='center left', bbox_to_anchor=(1, 0.5), fontsize=30)
 
