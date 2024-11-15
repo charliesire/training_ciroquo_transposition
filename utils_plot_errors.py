@@ -216,7 +216,9 @@ def plot_confidence_alpha(index_calib, scale, M, beta, size_grid, alpha_min, alp
   ratios_dic = {} #compute the importance sampling ratios for every alpha in the grid
   for ii in range(len(alpha_grid)):
     alpha = alpha_grid[ii]
-    ratios_dic[str(alpha)] = np.array(p_lambda_df(df_Lambda = df_Lambda, alpha = np.array(alpha), index_lambda_p = index_lambda_p, index_lambda_q = index_lambda_q, scale = scale,  bMINlambda = bMINlambda, bMAXlambda = bMAXlambda)/p_alphastar).reshape(len(p_alphastar),1)
+    str_alpha = str(alpha)
+    if len(index_lambda_q) == 1: alpha = np.array([alpha])
+    ratios_dic[str_alpha] = np.array(p_lambda_df(df_Lambda = df_Lambda, alpha = np.array(alpha), index_lambda_p = index_lambda_p, index_lambda_q = index_lambda_q, scale = scale,  bMINlambda = bMINlambda, bMAXlambda = bMAXlambda)/p_alphastar).reshape(len(p_alphastar),1)
       
   is_terms = np.concatenate([stored_likelihoods*ratios_dic[str(alpha)] for alpha in alpha_grid], axis=1) #likelihood times is ratios (p(yobs | lambda_k) p(lambda_k | alpha)/p(lambda_k | alpha_star)
   is_terms_diff = is_terms - beta*stored_likelihoods #(p(yobs | lambda_k) (p(lambda_k | alpha)/p(lambda_k | alpha_star) - \beta)
@@ -225,13 +227,12 @@ def plot_confidence_alpha(index_calib, scale, M, beta, size_grid, alpha_min, alp
 
 
   confidence = norm.cdf(np.sqrt(M)*(-mu_alpha)/std_alpha)
-  figure(figsize=(15, 15), dpi=80) #plot the confidence level ac
+  figure(figsize=(10, 5), dpi=80) #plot the confidence level ac
   if len(index_lambda_q)==1: 
     plt.plot(np.linspace(bounds[0][0],bounds[0][1],size_grid), confidence)
-    plt.title(r"Asymptotic confidence level $\gamma(\alpha)$", fontsize=35)
-    plt.xlabel(r'\alpha')
-    plt.ylabel(r'\gamma(\alpha)')
-    plt.show()
+    plt.scatter(alpha_star, min(confidence), marker = 'x', color = 'red', label = r'$\alpha^\star_\ell$')
+    plt.xlabel(r'$\alpha$', fontsize = 20)
+    plt.ylabel(r'$\gamma(\alpha)$', fontsize = 20)
 
   else:
     contour = plt.contourf(np.linspace(bounds[0][0],bounds[0][1],size_grid),np.linspace(bounds[1][0],bounds[1][1],size_grid), np.transpose(confidence.reshape(size_grid,size_grid)), cmap='viridis',extend="max")
@@ -240,7 +241,10 @@ def plot_confidence_alpha(index_calib, scale, M, beta, size_grid, alpha_min, alp
     colorbar.ax.tick_params(labelsize=40)
     colorbar.ax.yaxis.set_major_formatter(ScalarFormatter(useOffset=False))
     plt.title(r"Asymptotic confidence level $\gamma(\alpha)$", fontsize=35)
-    plt.yticks(fontsize=25)
-    plt.xticks(fontsize=25)
     plt.legend(loc='upper right', fontsize=35)
-    plt.show()
+  
+  plt.title(r"Asymptotic confidence level $\gamma(\alpha)$", fontsize=35)
+  plt.yticks(fontsize=15)
+  plt.xticks(fontsize=15)
+  plt.show()
+
