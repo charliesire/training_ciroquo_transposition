@@ -210,8 +210,8 @@ def plot_confidence_alpha(index_calib, scale, M, beta, size_grid, alpha_min, alp
 
 
   bounds = [(max(alpha_star[ii] - delta_alpha,alpha_min), min(alpha_max, alpha_star[ii]+delta_alpha)) for ii in range(len(alpha_star))] #bounds of the grid
-
-  alpha_grid = np.array(list(itertools.product(np.linspace(bounds[0][0],bounds[0][1],size_grid), np.linspace(bounds[1][0],bounds[1][1],size_grid))))
+  if len(index_lambda_q)==1: alpha_grid = np.linspace(bounds[0][0], bounds[0][1], size_grid)
+  else: alpha_grid = np.array(list(itertools.product(np.linspace(bounds[0][0],bounds[0][1],size_grid), np.linspace(bounds[1][0],bounds[1][1],size_grid))))
   p_alphastar = p_lambda_df(df_Lambda = df_Lambda, alpha = alpha_star, index_lambda_p = index_lambda_p, index_lambda_q = index_lambda_q, scale = scale, bMINlambda = bMINlambda, bMAXlambda = bMAXlambda) #prior coefficient p(lambda_k | alpha_map)
   ratios_dic = {} #compute the importance sampling ratios for every alpha in the grid
   for ii in range(len(alpha_grid)):
@@ -225,16 +225,22 @@ def plot_confidence_alpha(index_calib, scale, M, beta, size_grid, alpha_min, alp
 
 
   confidence = norm.cdf(np.sqrt(M)*(-mu_alpha)/std_alpha)
-
-
   figure(figsize=(15, 15), dpi=80) #plot the confidence level ac
-  contour = plt.contourf(np.linspace(bounds[0][0],bounds[0][1],10),np.linspace(bounds[1][0],bounds[1][1],10), np.transpose(confidence.reshape(10,10)), cmap='viridis',extend="max")
-  plt.scatter(alpha_star[0], alpha_star[1], marker='x', color='red', s=200, linewidths=5, label=r'$\alpha^\star_\ell$')
-  colorbar = plt.colorbar(contour, label='')
-  colorbar.ax.tick_params(labelsize=40)
-  colorbar.ax.yaxis.set_major_formatter(ScalarFormatter(useOffset=False))
-  plt.title(r"Asymptotic confidence level $\gamma(\alpha)$", fontsize=35)
-  plt.yticks(fontsize=25)
-  plt.xticks(fontsize=25)
-  plt.legend(loc='upper right', fontsize=35)
-  plt.show()
+  if len(index_lambda_q)==1: 
+    plt.plot(np.linspace(bounds[0][0],bounds[0][1],size_grid), confidence)
+    plt.title(r"Asymptotic confidence level $\gamma(\alpha)$", fontsize=35)
+    plt.xlabel(r'\alpha')
+    plt.ylabel(r'\gamma(\alpha)')
+    plt.show()
+
+  else:
+    contour = plt.contourf(np.linspace(bounds[0][0],bounds[0][1],size_grid),np.linspace(bounds[1][0],bounds[1][1],size_grid), np.transpose(confidence.reshape(size_grid,size_grid)), cmap='viridis',extend="max")
+    plt.scatter(alpha_star[0], alpha_star[1], marker='x', color='red', s=200, linewidths=5, label=r'$\alpha^\star_\ell$')
+    colorbar = plt.colorbar(contour, label='')
+    colorbar.ax.tick_params(labelsize=40)
+    colorbar.ax.yaxis.set_major_formatter(ScalarFormatter(useOffset=False))
+    plt.title(r"Asymptotic confidence level $\gamma(\alpha)$", fontsize=35)
+    plt.yticks(fontsize=25)
+    plt.xticks(fontsize=25)
+    plt.legend(loc='upper right', fontsize=35)
+    plt.show()
