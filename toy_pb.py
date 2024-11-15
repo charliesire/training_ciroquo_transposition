@@ -45,5 +45,5 @@ def myCODE(lambd, index = [1,2], std_bool = False, vectorize = True, idx_loo = N
 
 
 def myCODEnew(x, lambd, index = 1, std_bool = False, mm_list = None):
-    return func(x, lambd, y,vectorize) 
+    return func(x = x, lambd = lambd, idx_y = index,vectorize = True) 
     
