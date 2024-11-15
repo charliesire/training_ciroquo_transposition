@@ -89,4 +89,22 @@ def full_bayes_results(index_calib, index_lambda_p, index_lambda_q, scale, bMINl
     save_results(pd.DataFrame(errors_bayes), "errors_bayes.csv", pre_path = pre_path, calib = index_calib)
     save_results(pd.DataFrame(intervals_bayes), "conf_level_bayes.csv", pre_path = pre_path, calib = index_calib)
 
-
+def predictor(x, index, sample_alpha, sample_lambda, myCODEnew, alpha_star = None, std_bool = False, mm_list = None, mean_std = True, psi = None):
+    if std_bool & (psi is not None): return "Error: Can not compute expectation of psi(Y) if std_bool is True"
+    if psi is None and mean_std == False: return "Nothing to compute as mean_std is False and psi is None"
+    if std_bool: Ysimu, Ystd = myCODEnew(x = x, lambd = sample_lambda, index = index, std_bool = std_bool, mm_list = mm_list)
+    else: Ysimu = myCODEnew(x = x, lambd = sample_lambda, index = index, std_bool = std_bool, mm_list = mm_list)
+    if alpha_star is None: 
+      ratio_is = np.array([1]*len(Ysimu)).reshape(-1,1)
+    else:
+      denom_ratio_is = p_lambda_df(df_Lambda = pd.DataFrame(sample_lambda), alpha = alpha_star, index_lambda_p=index_lambda_p, index_lambda_q = index_lambda_q, scale = scale, bMINlambda = bMINlambda, bMAXlambda = bMAXlambda)  #compute the denominator of the importance sampling ratios
+      ratio_is = np.concatenate([p_lambda_df(df_Lambda = pd.DataFrame(sample_lambda), alpha = alpha_prov, index_lambda_p=index_lambda_p, index_lambda_q = index_lambda_q, scale = scale, bMINlambda = bMINlambda, bMAXlambda = bMAXlambda).values.reshape(-1,1) for alpha_prov in sample_alpha], axis=1)/denom_ratio_is.values.reshape(-1,1)  #compute the importance sampling ratios
+    if mean_std:
+        mean = np.mean(np.array([np.average(Ysimu, weights = ratio_is[:,kk]) for kk in range(ratio_is.shape[1])]))
+        std = np.sqrt(np.mean(np.array([np.average(Ysimu**2, weights = ratio_is[:,kk]) for kk in range(ratio_is.shape[1])])) - mean**2)
+        if std_bool: std = std + np.mean(np.array([np.average(Ystd**2, weights = ratio_is[:,kk]) for kk in range(ratio_is.shape[1])]))
+        return mean, std                                         
+    else:  
+        psi_y = np.array([psi(Ysimu[kk]) for kk in range(len(Ysimu))])
+        mean = np.mean(np.array([np.average(psi_y, weights = ratio_is[:,kk]) for kk in range(ratio_is.shape[1])]))
+        return mean
