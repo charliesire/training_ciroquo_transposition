@@ -240,10 +240,10 @@ def plot_confidence_alpha(index_calib, scale, M, beta, size_grid, alpha_min, alp
     colorbar = plt.colorbar(contour, label='')
     colorbar.ax.tick_params(labelsize=15)
     colorbar.ax.yaxis.set_major_formatter(ScalarFormatter(useOffset=False))
-    plt.title(r"Asymptotic confidence level $\gamma(\alpha)$", fontsize=35)
+    plt.title(r"Asymptotic confidence level $\gamma(\alpha)$", fontsize=27)
     plt.legend(loc='upper right', fontsize=35)
   
-  plt.title(r"Asymptotic confidence level $\gamma(\alpha)$", fontsize=35)
+  plt.title(r"Asymptotic confidence level $\gamma(\alpha)$", fontsize=27)
   plt.yticks(fontsize=15)
   plt.xticks(fontsize=15)
   plt.show()
